@@ -134,7 +134,6 @@
     </header>
 
     <div class="container">
-        
         <!-- HOME VIEW -->
         <section id="view-home" class="view-section active">
             <div class="home-menu">
@@ -213,17 +212,16 @@
 
     <script>
         // ==========================================
-        // 1. YOUR EXACT SUPABASE CREDENTIALS
+        // 1. SUPABASE CREDENTIALS
         // ==========================================
         const SUPABASE_URL = 'https://uoeqqiaobgyjicgexgtt.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXFxaWFvYmd5amljZ2V4Z3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzE2MzgsImV4cCI6MjA4OTAwNzYzOH0.ty_mBkB_b8TA4z3iYldvI3tNeP4M_Iff_ZlH08K3kVs';
         
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // State Variables
         let currentStream = null;
         let facingMode = 'environment';
-        let inventoryData = [];
+        let inventoryData =[];
         let currentBatch =[]; 
 
         // ==========================================
@@ -286,10 +284,8 @@
             canvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 if (mode === 'single') {
-                    // Continuous Single Image Upload
                     uploadSingleImage(blob);
                 } else {
-                    // Add to Multiple Image Batch
                     currentBatch.push({ blob, url });
                     renderFilmstrip();
                 }
@@ -320,40 +316,38 @@
         function removePhoto(index) { currentBatch.splice(index, 1); renderFilmstrip(); }
 
         // ==========================================
-        // UPLOAD LOGIC (WITH DETAILED ERRORS)
+        // UPLOAD LOGIC (WITH FAILSAFE)
         // ==========================================
         
-        // Function 1: Uploads 1 photo instantly (Rapid Fire)
         async function uploadSingleImage(blob) {
             toggleLoader(true, "Saving Single Product...");
             try {
                 const fileName = `product_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
                 
-                // 1. Upload to Storage
                 const { error: uploadError } = await supabaseClient.storage.from('images').upload(fileName, blob, { contentType: 'image/jpeg' });
                 if (uploadError) throw new Error("Storage Upload Failed: " + uploadError.message);
                 
-                // 2. Get URL
                 const { data } = supabaseClient.storage.from('images').getPublicUrl(fileName);
                 
-                // 3. Save to Database
-                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ images: [data.publicUrl] }]);
+                // FAILSAFE: We pass the URL to BOTH 'images' array AND 'image_url' string to bypass the strict rule
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ 
+                    image_url: data.publicUrl, 
+                    images: [data.publicUrl] 
+                }]);
                 if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
 
                 showToast("Product saved! Ready for next.");
             } catch (err) {
                 console.error("Upload error:", err);
-                alert("ERROR: " + err.message + "\n\nDid you run the SQL Code provided?");
+                alert("ERROR: " + err.message);
             } finally {
                 toggleLoader(false);
             }
         }
 
-        // Function 2: Uploads a batch of photos for 1 product
         async function saveProductBatch() {
             if(currentBatch.length === 0) return;
             
-            // Isolate batch so user can keep taking photos while uploading
             const batchToUpload = [...currentBatch];
             currentBatch =[];
             renderFilmstrip();
@@ -371,15 +365,19 @@
 
                 const uploadedUrls = await Promise.all(uploadPromises);
 
-                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ images: uploadedUrls }]);
+                // FAILSAFE: We pass uploadedUrls[0] to the old image_url string to bypass the database rule
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ 
+                    image_url: uploadedUrls[0], 
+                    images: uploadedUrls 
+                }]);
+                
                 if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
 
                 showToast("Multi-photo Product saved!");
 
             } catch (err) {
                 console.error("Batch upload failed:", err);
-                alert("ERROR: " + err.message + "\n\nDid you run the SQL Code provided?");
-                // Put images back if failed
+                alert("ERROR: " + err.message);
                 currentBatch = [...batchToUpload, ...currentBatch];
                 renderFilmstrip();
             } finally {
