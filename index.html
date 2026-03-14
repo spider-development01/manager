@@ -5,13 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Capture & Inventory Pro</title>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons (Premium SVG Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -21,462 +16,122 @@
             --text-muted: #636e72;
             --shadow-light: #ffffff;
             --shadow-dark: #a3b1c6;
-            --primary: #4F46E5; /* Indigo */
+            --primary: #4F46E5; 
             --primary-hover: #4338ca;
             --danger: #ff4757;
             --glass-bg: rgba(255, 255, 255, 0.35);
             --glass-border: rgba(255, 255, 255, 0.5);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-        }
+        /* --- Neomorphism --- */
+        .neo-box { background: var(--bg); border-radius: 24px; box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .neo-btn { background: var(--bg); border: none; padding: 16px 32px; border-radius: 18px; color: var(--text-main); font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light); transition: all 0.2s ease-in-out; display: inline-flex; align-items: center; justify-content: center; gap: 12px; outline: none; }
+        .neo-btn-rounded { border-radius: 50px; }
+        .neo-btn:hover { color: var(--primary); }
+        .neo-btn:active { box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); color: var(--primary); }
+        .neo-btn-primary { color: var(--primary); }
+        .neo-btn-danger { color: var(--danger); }
 
-        /* --- Elevated Neomorphism --- */
-        .neo-box {
-            background: var(--bg);
-            border-radius: 24px;
-            box-shadow: 10px 10px 20px var(--shadow-dark), 
-                       -10px -10px 20px var(--shadow-light);
-        }
-        
-        .neo-btn {
-            background: var(--bg);
-            border: none;
-            padding: 16px 32px;
-            border-radius: 50px;
-            color: var(--text-main);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 7px 7px 14px var(--shadow-dark), 
-                       -7px -7px 14px var(--shadow-light);
-            transition: all 0.2s ease-in-out;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            outline: none;
-        }
+        .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .input-group label { font-size: 13px; font-weight: 600; color: var(--text-muted); padding-left: 10px; }
+        .neo-input { width: 100%; background: var(--bg); border: none; padding: 14px 20px; border-radius: 16px; outline: none; color: var(--text-main); font-weight: 500; box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); transition: all 0.3s ease; }
+        .neo-input:focus { box-shadow: inset 7px 7px 14px var(--shadow-dark), inset -7px -7px 14px var(--shadow-light); }
 
-        .neo-btn:hover {
-            color: var(--primary);
-        }
+        /* --- Glassmorphism --- */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
 
-        .neo-btn:active {
-            box-shadow: inset 5px 5px 10px var(--shadow-dark), 
-                        inset -5px -5px 10px var(--shadow-light);
-            color: var(--primary);
-        }
-
-        .neo-btn-primary {
-            color: var(--primary);
-        }
-
-        /* Pressed-in Neomorphic Inputs */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            padding-left: 10px;
-        }
-
-        .neo-input {
-            width: 100%;
-            background: var(--bg);
-            border: none;
-            padding: 14px 20px;
-            border-radius: 16px;
-            outline: none;
-            color: var(--text-main);
-            font-weight: 500;
-            box-shadow: inset 5px 5px 10px var(--shadow-dark), 
-                        inset -5px -5px 10px var(--shadow-light);
-            transition: all 0.3s ease;
-        }
-
-        .neo-input:focus {
-            box-shadow: inset 7px 7px 14px var(--shadow-dark), 
-                        inset -7px -7px 14px var(--shadow-light);
-        }
-
-        .neo-input::placeholder {
-            color: #a0aabf;
-        }
-
-        /* --- Premium Glassmorphism --- */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-        }
-
-        /* --- Layout & Core --- */
-        header {
-            width: 90%;
-            max-width: 1000px;
-            padding: 24px;
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: var(--text-main);
-        }
-
-        header i {
-            font-size: 32px;
-            color: var(--primary);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            padding-bottom: 80px;
-        }
-
-        .view-section {
-            display: none;
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* --- Layout --- */
+        header { width: 90%; max-width: 1000px; padding: 24px; text-align: center; margin-top: 30px; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        header h1 { font-size: 26px; font-weight: 700; color: var(--text-main); }
+        header i { font-size: 32px; color: var(--primary); }
+        .container { width: 90%; max-width: 1000px; padding-bottom: 80px; }
+        .view-section { display: none; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- Home View --- */
-        .home-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        .home-btn {
-            width: 280px;
-            height: 90px;
-            font-size: 18px;
-            border-radius: 24px;
-        }
-
-        .home-btn i {
-            font-size: 28px;
-        }
+        .home-menu { display: flex; flex-direction: column; gap: 30px; align-items: center; margin-top: 40px; }
+        .home-btn { width: 280px; height: 90px; font-size: 18px; border-radius: 24px; }
+        .home-btn i { font-size: 28px; }
 
         /* --- Capture View --- */
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .mode-selector { display: flex; justify-content: center; padding: 8px; border-radius: 18px; gap: 10px; margin-bottom: 24px; }
+        .mode-label { position: relative; cursor: pointer; padding: 12px 24px; font-weight: 600; font-size: 14px; color: var(--text-muted); border-radius: 12px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .mode-label input { display: none; }
+        .mode-label.active { color: var(--primary); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
 
-        /* Custom Radio Buttons */
-        .mode-selector {
-            display: flex;
-            justify-content: center;
-            padding: 8px;
-            border-radius: 18px;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .mode-label {
-            position: relative;
-            cursor: pointer;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-muted);
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mode-label input {
-            display: none;
-        }
-
-        .mode-label.active {
-            color: var(--primary);
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
-        }
-
-        /* Camera Pro UI */
-        .camera-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            border-radius: 32px;
-            padding: 10px;
-            background: var(--bg);
-            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-        }
-
-        .camera-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 3/4;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #111;
-        }
-
-        #camera-feed {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Rule of Thirds Grid */
-        .camera-grid {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image: 
-                linear-gradient(to right, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.4) 33.33%, transparent calc(33.33% + 0.5px), transparent calc(66.66% - 0.5px), rgba(255,255,255,0.4) 66.66%, transparent calc(66.66% + 0.5px)),
-                linear-gradient(to bottom, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.4) 33.33%, transparent calc(33.33% + 0.5px), transparent calc(66.66% - 0.5px), rgba(255,255,255,0.4) 66.66%, transparent calc(66.66% + 0.5px));
-        }
-
-        /* Center Crosshair */
-        .camera-crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            pointer-events: none;
-            border: 1px solid rgba(255,255,255,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .camera-crosshair::before, .camera-crosshair::after {
-            content: '';
-            position: absolute;
-            background: rgba(255,255,255,0.8);
-        }
+        .camera-wrapper { position: relative; width: 100%; max-width: 500px; margin: 0 auto; border-radius: 32px; padding: 10px; background: var(--bg); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .camera-container { position: relative; width: 100%; aspect-ratio: 3/4; border-radius: 24px; overflow: hidden; background: #111; }
+        #camera-feed { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .camera-grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.4) 33.33%, transparent calc(33.33% + 0.5px), transparent calc(66.66% - 0.5px), rgba(255,255,255,0.4) 66.66%, transparent calc(66.66% + 0.5px)), linear-gradient(to bottom, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.4) 33.33%, transparent calc(33.33% + 0.5px), transparent calc(66.66% - 0.5px), rgba(255,255,255,0.4) 66.66%, transparent calc(66.66% + 0.5px)); }
+        .camera-crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; pointer-events: none; border: 1px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; }
+        .camera-crosshair::before, .camera-crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.8); }
         .camera-crosshair::before { width: 2px; height: 10px; }
         .camera-crosshair::after { width: 10px; height: 2px; }
 
-        .camera-controls {
-            position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            padding: 12px 24px;
-            z-index: 10;
-        }
+        /* Filmstrip Overlay for Multiple Photos */
+        .filmstrip { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 10px; padding: 10px; border-radius: 16px; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); overflow-x: auto; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 20; }
+        .filmstrip.active { opacity: 1; pointer-events: auto; }
+        .filmstrip::-webkit-scrollbar { display: none; }
+        .thumb-wrapper { position: relative; flex-shrink: 0; }
+        .thumb-wrapper img { height: 60px; width: 45px; object-fit: cover; border-radius: 8px; border: 2px solid white; }
+        .thumb-wrapper .del-thumb { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
 
-        /* DSLR Shutter Button */
-        .shutter-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            outline: none;
-        }
-        .shutter-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 4px solid white;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .shutter-btn::after {
-            content: '';
-            position: absolute;
-            width: 54px;
-            height: 54px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.15s ease-out;
-        }
-        .shutter-btn:active::after {
-            transform: scale(0.85);
-            background: #f0f0f0;
-        }
+        .camera-controls { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 30px; padding: 12px 24px; z-index: 10; width: max-content; }
+        .shutter-btn { width: 70px; height: 70px; border-radius: 50%; border: none; background: transparent; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; }
+        .shutter-btn::before { content: ''; position: absolute; inset: 0; border: 4px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .shutter-btn::after { content: ''; position: absolute; width: 54px; height: 54px; background: white; border-radius: 50%; transition: transform 0.15s ease-out; }
+        .shutter-btn:active::after { transform: scale(0.85); background: #f0f0f0; }
 
-        .icon-btn {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            transition: background 0.2s;
-        }
+        .icon-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 48px; height: 48px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: background 0.2s; }
         .icon-btn:hover { background: rgba(0,0,0,0.5); }
+        
+        /* Floating Save Button for Multiple Mode */
+        .upload-batch-btn { display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 20; gap: 8px; align-items: center; }
+        .upload-batch-btn.active { display: flex; animation: fadeIn 0.3s ease; }
 
         /* --- Inventory View --- */
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
+        .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .inventory-card { padding: 24px; display: flex; flex-direction: column; }
+        
+        /* Image Carousel */
+        .carousel-container { position: relative; width: 100%; padding-top: 75%; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        .carousel-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 16px; transition: opacity 0.3s ease; }
+        .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2; transition: transform 0.2s; }
+        .carousel-nav:active { transform: translateY(-50%) scale(0.9); }
+        .nav-left { left: 10px; }
+        .nav-right { right: 10px; }
+        .carousel-badge { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); z-index: 2; }
 
-        .inventory-card {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .inventory-img-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 75%; /* 4:3 Aspect Ratio */
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-        }
-
-        .inventory-img {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+        .inventory-actions { display: flex; gap: 12px; margin-top: 8px; }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .empty-state i { font-size: 64px; color: #b0b8c9; }
 
         /* --- Global Components --- */
-        .toast {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(120px);
-            padding: 16px 32px;
-            color: white;
-            font-weight: 500;
-            font-size: 15px;
-            border-radius: 50px;
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 9999;
-            background: rgba(79, 70, 229, 0.9);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
-        }
-        .toast i { font-size: 20px; }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(120px); padding: 16px 32px; color: white; font-weight: 500; font-size: 15px; border-radius: 50px; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; background: rgba(79, 70, 229, 0.9); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3); }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.danger-toast { background: rgba(255, 71, 87, 0.9); box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3); }
 
-        /* Overlay Loader */
-        .loader-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(224, 229, 236, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: 600;
-            gap: 15px;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(79, 70, 229, 0.2);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        .loader-overlay { position: fixed; inset: 0; background: rgba(224, 229, 236, 0.8); backdrop-filter: blur(5px); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 600; gap: 15px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(79, 70, 229, 0.2); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
 
-    <!-- Global Fullscreen Loader -->
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
-        <span id="loader-text">Processing...</span>
+        <span id="loader-text">Saving Product...</span>
     </div>
 
-    <!-- Header -->
     <header class="neo-box">
         <i class="ph-fill ph-aperture"></i>
-        <h1>Capture the Steps
-        </h1>
+        <h1>Capture The Steps</h1>
     </header>
 
     <div class="container">
@@ -484,11 +139,11 @@
         <!-- ================= HOME VIEW ================= -->
         <section id="view-home" class="view-section active">
             <div class="home-menu">
-                <button class="neo-btn home-btn neo-btn-primary" onclick="navTo('capture')">
-                    <i class="ph ph-camera"></i> Launch Camera
+                <button class="neo-btn home-btn neo-btn-primary neo-btn-rounded" onclick="navTo('capture')">
+                    <i class="ph ph-camera"></i> Continuous Capture
                 </button>
-                <button class="neo-btn home-btn" onclick="navTo('inventory')">
-                    <i class="ph ph-package"></i> View Inventory
+                <button class="neo-btn home-btn neo-btn-rounded" onclick="navTo('inventory')">
+                    <i class="ph ph-kanban"></i> Manage Inventory
                 </button>
             </div>
         </section>
@@ -496,19 +151,20 @@
         <!-- ================= CAPTURE VIEW ================= -->
         <section id="view-capture" class="view-section">
             <div class="nav-bar">
-                <button class="neo-btn" onclick="navTo('home')">
-                    <i class="ph ph-arrow-left"></i> Back
+                <button class="neo-btn neo-btn-rounded" onclick="navTo('home')">
+                    <i class="ph ph-arrow-left"></i> Home
                 </button>
+                <div style="font-size:14px; color:var(--text-muted); font-weight:600;">Capture Mode</div>
             </div>
             
             <div class="mode-selector neo-box">
                 <label class="mode-label active" id="label-single">
                     <input type="radio" name="captureMode" value="single" checked onchange="updateModeUI()"> 
-                    <i class="ph ph-image"></i> Single
+                    <i class="ph ph-image"></i> 1 Photo / Product
                 </label>
                 <label class="mode-label" id="label-multi">
                     <input type="radio" name="captureMode" value="multiple" onchange="updateModeUI()"> 
-                    <i class="ph ph-images"></i> Multiple
+                    <i class="ph ph-images"></i> Multi-Photos / Product
                 </label>
             </div>
 
@@ -518,12 +174,19 @@
                     <div class="camera-grid"></div>
                     <div class="camera-crosshair"></div>
                     
+                    <!-- Filmstrip Overlay -->
+                    <div id="filmstrip" class="filmstrip"></div>
+
+                    <!-- Floating Save Button -->
+                    <button id="upload-batch-btn" class="upload-batch-btn" onclick="saveProduct()">
+                        <i class="ph-bold ph-upload-simple"></i> Upload Product (<span id="batch-count">0</span>)
+                    </button>
+
                     <div class="camera-controls glass-panel">
                         <button class="icon-btn" onclick="switchCamera()" title="Flip Camera">
                             <i class="ph ph-arrows-clockwise"></i>
                         </button>
                         <button class="shutter-btn" onclick="takePhoto()" title="Capture"></button>
-                        <!-- Spacer for balance -->
                         <div style="width: 48px;"></div> 
                     </div>
                 </div>
@@ -533,24 +196,19 @@
         <!-- ================= INVENTORY VIEW ================= -->
         <section id="view-inventory" class="view-section">
             <div class="nav-bar">
-                <button class="neo-btn" onclick="navTo('home')">
-                    <i class="ph ph-arrow-left"></i> Back
+                <button class="neo-btn neo-btn-rounded" onclick="navTo('home')">
+                    <i class="ph ph-arrow-left"></i> Home
                 </button>
-                <button class="neo-btn neo-btn-primary" onclick="exportCSV()">
+                <button class="neo-btn neo-btn-primary neo-btn-rounded" onclick="exportCSV()">
                     <i class="ph ph-download-simple"></i> Export CSV
                 </button>
             </div>
-            
-            <div id="inventory-list" class="inventory-grid">
-                <!-- Items injected dynamically -->
-            </div>
+            <div id="inventory-list" class="inventory-grid"></div>
         </section>
     </div>
 
-    <!-- Hidden Canvas -->
     <canvas id="canvas" style="display: none;"></canvas>
 
-    <!-- Premium Toast -->
     <div id="toast" class="toast">
         <i class="ph-fill ph-check-circle"></i>
         <span id="toast-msg">Success!</span>
@@ -559,11 +217,9 @@
     <script>
         // ==========================================
         // 1. SUPABASE CONFIGURATION
-        // Replace with your Supabase details
         // ==========================================
         const SUPABASE_URL = 'https://uoeqqiaobgyjicgexgtt.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXFxaWFvYmd5amljZ2V4Z3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzE2MzgsImV4cCI6MjA4OTAwNzYzOH0.ty_mBkB_b8TA4z3iYldvI3tNeP4M_Iff_ZlH08K3kVs';
-        
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXFxaWFvYmd5amljZ2V4Z3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzE2MzgsImV4cCI6MjA4OTAwNzYzOH0.ty_mBkB_b8TA4z3iYldvI3tNeP4M_Iff_ZlH08K3kVs';;
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ==========================================
@@ -572,6 +228,9 @@
         let currentStream = null;
         let facingMode = 'environment';
         let inventoryData =[];
+        
+        // Batching state for Continuous/Multiple mode
+        let currentBatch =[]; 
 
         // ==========================================
         // UI HELPERS
@@ -579,114 +238,146 @@
         function navTo(view) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
-            
-            if(view === 'capture') startCamera();
-            else stopCamera();
-
+            if(view === 'capture') startCamera(); else stopCamera();
             if(view === 'inventory') loadInventory();
         }
 
-        function showToast(message) {
-            document.getElementById('toast-msg').innerText = message;
+        function showToast(message, type = "success") {
             const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            document.getElementById('toast-msg').innerText = message;
+            if(type === 'danger') { toast.classList.add('danger-toast'); icon.className = 'ph-fill ph-trash'; } 
+            else { toast.classList.remove('danger-toast'); icon.className = 'ph-fill ph-check-circle'; }
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         function toggleLoader(show, text = "Processing...") {
-            const loader = document.getElementById('loader');
             document.getElementById('loader-text').innerText = text;
-            loader.style.display = show ? 'flex' : 'none';
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
         }
 
         function updateModeUI() {
             const isSingle = document.querySelector('input[value="single"]').checked;
             document.getElementById('label-single').classList.toggle('active', isSingle);
             document.getElementById('label-multi').classList.toggle('active', !isSingle);
+            
+            // If switched to single, clear existing batch
+            if(isSingle && currentBatch.length > 0) {
+                currentBatch =[];
+                renderFilmstrip();
+            }
         }
 
         // ==========================================
-        // CAMERA LOGIC
+        // CAMERA & CONTINUOUS CAPTURE LOGIC
         // ==========================================
         async function startCamera() {
             if (currentStream) stopCamera();
-            
-            const constraints = {
-                video: { facingMode: facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } }
-            };
-
             try {
-                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } } });
                 document.getElementById('camera-feed').srcObject = currentStream;
-            } catch (err) {
-                console.error("Camera error: ", err);
-                alert("Please allow camera access to use this feature.");
-            }
+            } catch (err) { alert("Camera access denied."); }
         }
 
         function stopCamera() {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-                currentStream = null;
-            }
+            if (currentStream) { currentStream.getTracks().forEach(track => track.stop()); currentStream = null; }
         }
 
-        function switchCamera() {
-            facingMode = facingMode === 'environment' ? 'user' : 'environment';
-            startCamera();
-        }
+        function switchCamera() { facingMode = facingMode === 'environment' ? 'user' : 'environment'; startCamera(); }
 
-        async function takePhoto() {
+        function takePhoto() {
             const video = document.getElementById('camera-feed');
             const canvas = document.getElementById('canvas');
             const mode = document.querySelector('input[name="captureMode"]:checked').value;
             
-            // Map video to canvas
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            toggleLoader(true, "Saving securely to cloud...");
-            
-            canvas.toBlob(async (blob) => {
-                const fileName = `capture_${Date.now()}.jpg`;
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                currentBatch.push({ blob, url });
                 
-                try {
-                    // Upload via Supabase
-                    const { error: uploadError } = await supabaseClient.storage
-                        .from('images')
-                        .upload(fileName, blob, { contentType: 'image/jpeg' });
-                        
-                    if (uploadError) throw uploadError;
-
-                    // Get URL
-                    const { data: urlData } = supabaseClient.storage
-                        .from('images')
-                        .getPublicUrl(fileName);
-                    
-                    // Insert Record
-                    const { error: dbError } = await supabaseClient
-                        .from('inventory_items')
-                        .insert([{ image_url: urlData.publicUrl }]);
-                    
-                    if (dbError) throw dbError;
-
-                    toggleLoader(false);
-                    showToast("Photo captured & saved!");
-
-                    if (mode === 'single') navTo('inventory');
-
-                } catch (err) {
-                    console.error("Upload failed", err);
-                    alert("Failed to save. Ensure Supabase URL/Key are set correctly.");
-                    toggleLoader(false);
+                if (mode === 'single') {
+                    // Single Mode: Instantly upload and reset (Continuous)
+                    saveProduct();
+                } else {
+                    // Multiple Mode: Add to local filmstrip and wait for user
+                    renderFilmstrip();
                 }
             }, 'image/jpeg', 0.85);
         }
 
+        function renderFilmstrip() {
+            const filmstrip = document.getElementById('filmstrip');
+            const uploadBtn = document.getElementById('upload-batch-btn');
+            
+            if (currentBatch.length > 0) {
+                filmstrip.classList.add('active');
+                uploadBtn.classList.add('active');
+                document.getElementById('batch-count').innerText = currentBatch.length;
+            } else {
+                filmstrip.classList.remove('active');
+                uploadBtn.classList.remove('active');
+            }
+
+            filmstrip.innerHTML = '';
+            currentBatch.forEach((item, index) => {
+                filmstrip.innerHTML += `
+                    <div class="thumb-wrapper">
+                        <img src="${item.url}" alt="thumb">
+                        <button class="del-thumb" onclick="removePhoto(${index})"><i class="ph-bold ph-x"></i></button>
+                    </div>`;
+            });
+        }
+
+        function removePhoto(index) {
+            currentBatch.splice(index, 1);
+            renderFilmstrip();
+        }
+
+        // Uploads array of images, inserts 1 product, resets for next product.
+        async function saveProduct() {
+            if(currentBatch.length === 0) return;
+            
+            toggleLoader(true, `Saving Product (${currentBatch.length} photos)...`);
+            let uploadedUrls =[];
+
+            try {
+                // Upload all blobs in parallel
+                const uploadPromises = currentBatch.map(async (item) => {
+                    const fileName = `product_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                    const { error } = await supabaseClient.storage.from('images').upload(fileName, item.blob, { contentType: 'image/jpeg' });
+                    if (error) throw error;
+                    
+                    const { data } = supabaseClient.storage.from('images').getPublicUrl(fileName);
+                    return data.publicUrl;
+                });
+
+                uploadedUrls = await Promise.all(uploadPromises);
+
+                // Insert SINGLE product entry with Array of URLs
+                const { error: dbError } = await supabaseClient
+                    .from('inventory_items')
+                    .insert([{ images: uploadedUrls }]);
+                
+                if (dbError) throw dbError;
+
+                // Success! Clear batch, stay on camera (Continuous Mode)
+                currentBatch =[];
+                renderFilmstrip();
+                showToast("Product saved! Ready for next.");
+
+            } catch (err) {
+                console.error("Upload failed", err);
+                alert("Failed to save product. Ensure Supabase keys are correct.");
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
         // ==========================================
-        // INVENTORY LOGIC
+        // INVENTORY LOGIC (Data Entry Team)
         // ==========================================
         async function loadInventory() {
             toggleLoader(true, "Loading inventory...");
@@ -694,121 +385,127 @@
             list.innerHTML = ''; 
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('inventory_items')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
+                const { data, error } = await supabaseClient.from('inventory_items').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 inventoryData = data;
 
                 if(data.length === 0) {
-                    list.innerHTML = `
-                        <div class="empty-state neo-box">
-                            <i class="ph ph-package"></i>
-                            <h3>Your inventory is empty</h3>
-                            <p>Go back to the camera to capture some items.</p>
-                        </div>`;
+                    list.innerHTML = `<div class="empty-state neo-box"><i class="ph ph-package"></i><h3>Your inventory is empty</h3><p>Use Continuous Capture to add items.</p></div>`;
                     return;
                 }
 
                 data.forEach(item => {
+                    // Handle backwards compatibility and new images array
+                    let imagesArray = item.images ||[];
+                    if (imagesArray.length === 0 && item.image_url) imagesArray =[item.image_url];
+                    if (imagesArray.length === 0) imagesArray =["https://via.placeholder.com/400x300?text=No+Image"];
+
+                    const hasMultiple = imagesArray.length > 1;
+                    const imagesJson = JSON.stringify(imagesArray).replace(/"/g, '&quot;');
+
                     const card = document.createElement('div');
                     card.className = 'neo-box inventory-card';
                     card.innerHTML = `
-                        <div class="inventory-img-wrapper">
-                            <img src="${item.image_url}" class="inventory-img" loading="lazy">
+                        <div class="carousel-container" id="carousel-${item.id}" data-images="${imagesJson}" data-idx="0">
+                            <img src="${imagesArray[0]}" class="carousel-img" id="img-${item.id}" loading="lazy">
+                            ${hasMultiple ? `
+                                <button class="carousel-nav nav-left" onclick="slideImg('${item.id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
+                                <button class="carousel-nav nav-right" onclick="slideImg('${item.id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
+                                <div class="carousel-badge" id="badge-${item.id}">1 / ${imagesArray.length}</div>
+                            ` : ''}
                         </div>
                         
-                        <div class="input-group">
-                            <label><i class="ph ph-barcode"></i> Model Number</label>
-                            <input type="text" class="neo-input" id="model-${item.id}" value="${item.model_no || ''}" placeholder="e.g. RTX-4090">
-                        </div>
-                        
-                        <div class="input-group" style="margin-bottom: 24px;">
-                            <label><i class="ph ph-ruler"></i> Sizes Available</label>
-                            <input type="text" class="neo-input" id="size-${item.id}" value="${item.sizes_available || ''}" placeholder="e.g. S, M, L">
-                        </div>
+                        <div class="input-group"><label><i class="ph ph-barcode"></i> Model Number</label>
+                            <input type="text" class="neo-input" id="model-${item.id}" value="${item.model_no || ''}"></div>
+                        <div class="input-group"><label><i class="ph ph-ruler"></i> Sizes Available</label>
+                            <input type="text" class="neo-input" id="size-${item.id}" value="${item.sizes_available || ''}"></div>
+                        <div class="input-group" style="margin-bottom: 20px;"><label><i class="ph ph-palette"></i> Color / Finish</label>
+                            <input type="text" class="neo-input" id="color-${item.id}" value="${item.color || ''}"></div>
 
-                        <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="width: 100%;">
-                            <i class="ph ph-floppy-disk"></i> Save Details
-                        </button>
+                        <div class="inventory-actions">
+                            <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="flex: 1;"><i class="ph ph-floppy-disk"></i> Save Data</button>
+                            <button class="neo-btn neo-btn-danger" onclick="deleteItem('${item.id}', this)" style="flex: 0 0 60px;"><i class="ph ph-trash"></i></button>
+                        </div>
                     `;
                     list.appendChild(card);
                 });
-            } catch (err) {
-                console.error("Error fetching", err);
-                list.innerHTML = `<p style="color:var(--danger); text-align:center; width:100%;">Error loading data. Check console.</p>`;
-            } finally {
-                toggleLoader(false);
-            }
+            } catch (err) { console.error(err); } finally { toggleLoader(false); }
         }
 
-        async function updateItem(id, btnElement) {
-            const modelNo = document.getElementById(`model-${id}`).value;
-            const sizes = document.getElementById(`size-${id}`).value;
-            const originalText = btnElement.innerHTML;
+        // Image Slider logic
+        function slideImg(id, dir) {
+            const container = document.getElementById(`carousel-${id}`);
+            const images = JSON.parse(container.getAttribute('data-images'));
+            let idx = parseInt(container.getAttribute('data-idx'));
             
-            btnElement.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Saving...`;
-            btnElement.style.pointerEvents = 'none';
+            idx = (idx + dir + images.length) % images.length; // Wrap around math
+            
+            container.setAttribute('data-idx', idx);
+            document.getElementById(`img-${id}`).src = images[idx];
+            document.getElementById(`badge-${id}`).innerText = `${idx + 1} / ${images.length}`;
+        }
+
+        async function updateItem(id, btn) {
+            const original = btn.innerHTML; btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Saving...`; btn.style.pointerEvents = 'none';
+            try {
+                const model_no = document.getElementById(`model-${id}`).value;
+                const sizes_available = document.getElementById(`size-${id}`).value;
+                const color = document.getElementById(`color-${id}`).value;
+
+                const { error } = await supabaseClient.from('inventory_items').update({ model_no, sizes_available, color }).eq('id', id);
+                if (error) throw error;
+                showToast("Data updated!");
+            } catch (err) { alert("Failed to update"); } 
+            finally { btn.innerHTML = original; btn.style.pointerEvents = 'auto'; }
+        }
+
+        async function deleteItem(id, btn) {
+            if (!confirm("Delete this product and ALL its photos?")) return;
+            btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i>`; btn.style.pointerEvents = 'none';
 
             try {
-                const { error } = await supabaseClient
-                    .from('inventory_items')
-                    .update({ model_no: modelNo, sizes_available: sizes })
-                    .eq('id', id);
+                const item = inventoryData.find(i => i.id === id);
+                let imagesToDel = item.images ||[];
+                if(imagesToDel.length === 0 && item.image_url) imagesToDel = [item.image_url];
 
+                // Remove Row
+                const { error } = await supabaseClient.from('inventory_items').delete().eq('id', id);
                 if (error) throw error;
-                
-                const itemIndex = inventoryData.findIndex(i => i.id === id);
-                if(itemIndex > -1) {
-                    inventoryData[itemIndex].model_no = modelNo;
-                    inventoryData[itemIndex].sizes_available = sizes;
+
+                // Remove ALL images from Bucket
+                if(imagesToDel.length > 0) {
+                    const fileNames = imagesToDel.map(url => { const p = url.split('/'); return p[p.length - 1]; });
+                    await supabaseClient.storage.from('images').remove(fileNames);
                 }
 
-                showToast("Details updated successfully");
-            } catch (err) {
-                console.error("Error updating", err);
-                alert("Failed to update item.");
-            } finally {
-                btnElement.innerHTML = originalText;
-                btnElement.style.pointerEvents = 'auto';
-            }
+                btn.closest('.inventory-card').remove();
+                showToast("Product deleted", "danger");
+            } catch (err) { alert("Failed to delete."); btn.innerHTML = `<i class="ph ph-trash"></i>`; btn.style.pointerEvents = 'auto'; }
         }
 
-        // ==========================================
-        // EXPORT TO CSV LOGIC
-        // ==========================================
         function exportCSV() {
-            if (inventoryData.length === 0) {
-                alert("No data available to export.");
-                return;
-            }
-
-            let csvContent = "ID,Model No,Sizes Available,Image URL,Capture Date\n";
-
-            inventoryData.forEach(row => {
-                const id = row.id;
-                const model = `"${(row.model_no || '').replace(/"/g, '""')}"`;
-                const size = `"${(row.sizes_available || '').replace(/"/g, '""')}"`;
-                const imgUrl = `"${row.image_url}"`;
-                const date = `"${new Date(row.created_at).toLocaleString()}"`;
+            if (inventoryData.length === 0) return alert("No data");
+            let csv = "ID,Model No,Sizes Available,Color,Image URLs (Pipe Separated),Capture Date\n";
+            inventoryData.forEach(r => {
+                const id = r.id;
+                const model = `"${(r.model_no || '').replace(/"/g, '""')}"`;
+                const size = `"${(r.sizes_available || '').replace(/"/g, '""')}"`;
+                const color = `"${(r.color || '').replace(/"/g, '""')}"`;
                 
-                csvContent += `${id},${model},${size},${imgUrl},${date}\n`;
+                let imgs = r.images ||[];
+                if(imgs.length === 0 && r.image_url) imgs = [r.image_url];
+                const urls = `"${imgs.join(' | ')}"`; 
+                
+                const date = `"${new Date(r.created_at).toLocaleString()}"`;
+                csv += `${id},${model},${size},${color},${urls},${date}\n`;
             });
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            
             const link = document.createElement("a");
-            link.href = url;
-            link.download = `Inventory_Export_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            link.download = `Inventory_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
-            document.body.removeChild(link);
             showToast("CSV Downloaded!");
         }
-
     </script>
 </body>
 </html>
