@@ -91,7 +91,7 @@
         .icon-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 48px; height: 48px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: background 0.2s; }
         .icon-btn:hover { background: rgba(0,0,0,0.5); }
         
-        /* Floating Save Button for Multiple Mode */
+        /* Floating Save Button */
         .upload-batch-btn { display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 20; gap: 8px; align-items: center; }
         .upload-batch-btn.active { display: flex; animation: fadeIn 0.3s ease; }
 
@@ -99,7 +99,6 @@
         .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
         .inventory-card { padding: 24px; display: flex; flex-direction: column; }
         
-        /* Image Carousel */
         .carousel-container { position: relative; width: 100%; padding-top: 75%; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
         .carousel-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 16px; transition: opacity 0.3s ease; }
         .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2; transition: transform 0.2s; }
@@ -112,7 +111,7 @@
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .empty-state i { font-size: 64px; color: #b0b8c9; }
 
-        /* --- Global Components --- */
+        /* --- Components --- */
         .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(120px); padding: 16px 32px; color: white; font-weight: 500; font-size: 15px; border-radius: 50px; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; background: rgba(79, 70, 229, 0.9); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3); }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.danger-toast { background: rgba(255, 71, 87, 0.9); box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3); }
@@ -131,12 +130,12 @@
 
     <header class="neo-box">
         <i class="ph-fill ph-aperture"></i>
-        <h1>Capture The Steps</h1>
+        <h1>Capture Pro</h1>
     </header>
 
     <div class="container">
         
-        <!-- ================= HOME VIEW ================= -->
+        <!-- HOME VIEW -->
         <section id="view-home" class="view-section active">
             <div class="home-menu">
                 <button class="neo-btn home-btn neo-btn-primary neo-btn-rounded" onclick="navTo('capture')">
@@ -148,7 +147,7 @@
             </div>
         </section>
 
-        <!-- ================= CAPTURE VIEW ================= -->
+        <!-- CAPTURE VIEW -->
         <section id="view-capture" class="view-section">
             <div class="nav-bar">
                 <button class="neo-btn neo-btn-rounded" onclick="navTo('home')">
@@ -174,11 +173,9 @@
                     <div class="camera-grid"></div>
                     <div class="camera-crosshair"></div>
                     
-                    <!-- Filmstrip Overlay -->
                     <div id="filmstrip" class="filmstrip"></div>
 
-                    <!-- Floating Save Button -->
-                    <button id="upload-batch-btn" class="upload-batch-btn" onclick="saveProduct()">
+                    <button id="upload-batch-btn" class="upload-batch-btn" onclick="saveProductBatch()">
                         <i class="ph-bold ph-upload-simple"></i> Upload Product (<span id="batch-count">0</span>)
                     </button>
 
@@ -193,7 +190,7 @@
             </div>
         </section>
 
-        <!-- ================= INVENTORY VIEW ================= -->
+        <!-- INVENTORY VIEW -->
         <section id="view-inventory" class="view-section">
             <div class="nav-bar">
                 <button class="neo-btn neo-btn-rounded" onclick="navTo('home')">
@@ -216,20 +213,17 @@
 
     <script>
         // ==========================================
-        // 1. SUPABASE CONFIGURATION
+        // 1. YOUR EXACT SUPABASE CREDENTIALS
         // ==========================================
         const SUPABASE_URL = 'https://uoeqqiaobgyjicgexgtt.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXFxaWFvYmd5amljZ2V4Z3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzE2MzgsImV4cCI6MjA4OTAwNzYzOH0.ty_mBkB_b8TA4z3iYldvI3tNeP4M_Iff_ZlH08K3kVs';;
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXFxaWFvYmd5amljZ2V4Z3R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzE2MzgsImV4cCI6MjA4OTAwNzYzOH0.ty_mBkB_b8TA4z3iYldvI3tNeP4M_Iff_ZlH08K3kVs';
+        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ==========================================
-        // STATE VARIABLES
-        // ==========================================
+        // State Variables
         let currentStream = null;
         let facingMode = 'environment';
-        let inventoryData =[];
-        
-        // Batching state for Continuous/Multiple mode
+        let inventoryData = [];
         let currentBatch =[]; 
 
         // ==========================================
@@ -261,16 +255,11 @@
             const isSingle = document.querySelector('input[value="single"]').checked;
             document.getElementById('label-single').classList.toggle('active', isSingle);
             document.getElementById('label-multi').classList.toggle('active', !isSingle);
-            
-            // If switched to single, clear existing batch
-            if(isSingle && currentBatch.length > 0) {
-                currentBatch =[];
-                renderFilmstrip();
-            }
+            if(isSingle && currentBatch.length > 0) { currentBatch =[]; renderFilmstrip(); }
         }
 
         // ==========================================
-        // CAMERA & CONTINUOUS CAPTURE LOGIC
+        // CAMERA LOGIC
         // ==========================================
         async function startCamera() {
             if (currentStream) stopCamera();
@@ -296,13 +285,12 @@
             
             canvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
-                currentBatch.push({ blob, url });
-                
                 if (mode === 'single') {
-                    // Single Mode: Instantly upload and reset (Continuous)
-                    saveProduct();
+                    // Continuous Single Image Upload
+                    uploadSingleImage(blob);
                 } else {
-                    // Multiple Mode: Add to local filmstrip and wait for user
+                    // Add to Multiple Image Batch
+                    currentBatch.push({ blob, url });
                     renderFilmstrip();
                 }
             }, 'image/jpeg', 0.85);
@@ -313,12 +301,10 @@
             const uploadBtn = document.getElementById('upload-batch-btn');
             
             if (currentBatch.length > 0) {
-                filmstrip.classList.add('active');
-                uploadBtn.classList.add('active');
+                filmstrip.classList.add('active'); uploadBtn.classList.add('active');
                 document.getElementById('batch-count').innerText = currentBatch.length;
             } else {
-                filmstrip.classList.remove('active');
-                uploadBtn.classList.remove('active');
+                filmstrip.classList.remove('active'); uploadBtn.classList.remove('active');
             }
 
             filmstrip.innerHTML = '';
@@ -331,53 +317,78 @@
             });
         }
 
-        function removePhoto(index) {
-            currentBatch.splice(index, 1);
-            renderFilmstrip();
+        function removePhoto(index) { currentBatch.splice(index, 1); renderFilmstrip(); }
+
+        // ==========================================
+        // UPLOAD LOGIC (WITH DETAILED ERRORS)
+        // ==========================================
+        
+        // Function 1: Uploads 1 photo instantly (Rapid Fire)
+        async function uploadSingleImage(blob) {
+            toggleLoader(true, "Saving Single Product...");
+            try {
+                const fileName = `product_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                
+                // 1. Upload to Storage
+                const { error: uploadError } = await supabaseClient.storage.from('images').upload(fileName, blob, { contentType: 'image/jpeg' });
+                if (uploadError) throw new Error("Storage Upload Failed: " + uploadError.message);
+                
+                // 2. Get URL
+                const { data } = supabaseClient.storage.from('images').getPublicUrl(fileName);
+                
+                // 3. Save to Database
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ images: [data.publicUrl] }]);
+                if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
+
+                showToast("Product saved! Ready for next.");
+            } catch (err) {
+                console.error("Upload error:", err);
+                alert("ERROR: " + err.message + "\n\nDid you run the SQL Code provided?");
+            } finally {
+                toggleLoader(false);
+            }
         }
 
-        // Uploads array of images, inserts 1 product, resets for next product.
-        async function saveProduct() {
+        // Function 2: Uploads a batch of photos for 1 product
+        async function saveProductBatch() {
             if(currentBatch.length === 0) return;
             
-            toggleLoader(true, `Saving Product (${currentBatch.length} photos)...`);
-            let uploadedUrls =[];
+            // Isolate batch so user can keep taking photos while uploading
+            const batchToUpload = [...currentBatch];
+            currentBatch =[];
+            renderFilmstrip();
+            
+            toggleLoader(true, `Uploading Product (${batchToUpload.length} photos)...`);
 
             try {
-                // Upload all blobs in parallel
-                const uploadPromises = currentBatch.map(async (item) => {
+                const uploadPromises = batchToUpload.map(async (item) => {
                     const fileName = `product_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
                     const { error } = await supabaseClient.storage.from('images').upload(fileName, item.blob, { contentType: 'image/jpeg' });
-                    if (error) throw error;
-                    
+                    if (error) throw new Error("Storage Upload Failed: " + error.message);
                     const { data } = supabaseClient.storage.from('images').getPublicUrl(fileName);
                     return data.publicUrl;
                 });
 
-                uploadedUrls = await Promise.all(uploadPromises);
+                const uploadedUrls = await Promise.all(uploadPromises);
 
-                // Insert SINGLE product entry with Array of URLs
-                const { error: dbError } = await supabaseClient
-                    .from('inventory_items')
-                    .insert([{ images: uploadedUrls }]);
-                
-                if (dbError) throw dbError;
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ images: uploadedUrls }]);
+                if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
 
-                // Success! Clear batch, stay on camera (Continuous Mode)
-                currentBatch =[];
-                renderFilmstrip();
-                showToast("Product saved! Ready for next.");
+                showToast("Multi-photo Product saved!");
 
             } catch (err) {
-                console.error("Upload failed", err);
-                alert("Failed to save product. Ensure Supabase keys are correct.");
+                console.error("Batch upload failed:", err);
+                alert("ERROR: " + err.message + "\n\nDid you run the SQL Code provided?");
+                // Put images back if failed
+                currentBatch = [...batchToUpload, ...currentBatch];
+                renderFilmstrip();
             } finally {
                 toggleLoader(false);
             }
         }
 
         // ==========================================
-        // INVENTORY LOGIC (Data Entry Team)
+        // INVENTORY LOGIC
         // ==========================================
         async function loadInventory() {
             toggleLoader(true, "Loading inventory...");
@@ -386,7 +397,7 @@
 
             try {
                 const { data, error } = await supabaseClient.from('inventory_items').select('*').order('created_at', { ascending: false });
-                if (error) throw error;
+                if (error) throw new Error("Failed to load: " + error.message);
                 inventoryData = data;
 
                 if(data.length === 0) {
@@ -395,9 +406,8 @@
                 }
 
                 data.forEach(item => {
-                    // Handle backwards compatibility and new images array
                     let imagesArray = item.images ||[];
-                    if (imagesArray.length === 0 && item.image_url) imagesArray =[item.image_url];
+                    if (imagesArray.length === 0 && item.image_url) imagesArray = [item.image_url];
                     if (imagesArray.length === 0) imagesArray =["https://via.placeholder.com/400x300?text=No+Image"];
 
                     const hasMultiple = imagesArray.length > 1;
@@ -429,17 +439,14 @@
                     `;
                     list.appendChild(card);
                 });
-            } catch (err) { console.error(err); } finally { toggleLoader(false); }
+            } catch (err) { alert(err.message); } finally { toggleLoader(false); }
         }
 
-        // Image Slider logic
         function slideImg(id, dir) {
             const container = document.getElementById(`carousel-${id}`);
             const images = JSON.parse(container.getAttribute('data-images'));
             let idx = parseInt(container.getAttribute('data-idx'));
-            
-            idx = (idx + dir + images.length) % images.length; // Wrap around math
-            
+            idx = (idx + dir + images.length) % images.length; 
             container.setAttribute('data-idx', idx);
             document.getElementById(`img-${id}`).src = images[idx];
             document.getElementById(`badge-${id}`).innerText = `${idx + 1} / ${images.length}`;
@@ -455,7 +462,7 @@
                 const { error } = await supabaseClient.from('inventory_items').update({ model_no, sizes_available, color }).eq('id', id);
                 if (error) throw error;
                 showToast("Data updated!");
-            } catch (err) { alert("Failed to update"); } 
+            } catch (err) { alert("Failed to update: " + err.message); } 
             finally { btn.innerHTML = original; btn.style.pointerEvents = 'auto'; }
         }
 
@@ -468,11 +475,9 @@
                 let imagesToDel = item.images ||[];
                 if(imagesToDel.length === 0 && item.image_url) imagesToDel = [item.image_url];
 
-                // Remove Row
                 const { error } = await supabaseClient.from('inventory_items').delete().eq('id', id);
                 if (error) throw error;
 
-                // Remove ALL images from Bucket
                 if(imagesToDel.length > 0) {
                     const fileNames = imagesToDel.map(url => { const p = url.split('/'); return p[p.length - 1]; });
                     await supabaseClient.storage.from('images').remove(fileNames);
@@ -480,7 +485,7 @@
 
                 btn.closest('.inventory-card').remove();
                 showToast("Product deleted", "danger");
-            } catch (err) { alert("Failed to delete."); btn.innerHTML = `<i class="ph ph-trash"></i>`; btn.style.pointerEvents = 'auto'; }
+            } catch (err) { alert("Failed to delete: " + err.message); btn.innerHTML = `<i class="ph ph-trash"></i>`; btn.style.pointerEvents = 'auto'; }
         }
 
         function exportCSV() {
