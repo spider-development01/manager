@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -27,7 +28,7 @@
         body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
 
         /* --- Neomorphism --- */
-        .neo-box { background: var(--bg); border-radius: 24px; box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .neo-box { background: var(--bg); border-radius: 24px; box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); transition: all 0.3s ease; }
         .neo-btn { background: var(--bg); border: none; padding: 16px 32px; border-radius: 18px; color: var(--text-main); font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light); transition: all 0.2s ease-in-out; display: inline-flex; align-items: center; justify-content: center; gap: 12px; outline: none; }
         .neo-btn-rounded { border-radius: 50px; }
         .neo-btn:hover { color: var(--primary); }
@@ -50,7 +51,9 @@
         .container { width: 90%; max-width: 1000px; padding-bottom: 80px; }
         .view-section { display: none; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .view-section.active { display: block; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
         /* --- Home View --- */
         .home-menu { display: flex; flex-direction: column; gap: 30px; align-items: center; margin-top: 40px; }
@@ -74,7 +77,7 @@
         .camera-crosshair::before { width: 2px; height: 10px; }
         .camera-crosshair::after { width: 10px; height: 2px; }
 
-        /* Filmstrip Overlay for Multiple Photos */
+        /* Filmstrip */
         .filmstrip { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 10px; padding: 10px; border-radius: 16px; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); overflow-x: auto; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 20; }
         .filmstrip.active { opacity: 1; pointer-events: auto; }
         .filmstrip::-webkit-scrollbar { display: none; }
@@ -87,17 +90,15 @@
         .shutter-btn::before { content: ''; position: absolute; inset: 0; border: 4px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .shutter-btn::after { content: ''; position: absolute; width: 54px; height: 54px; background: white; border-radius: 50%; transition: transform 0.15s ease-out; }
         .shutter-btn:active::after { transform: scale(0.85); background: #f0f0f0; }
-
         .icon-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 48px; height: 48px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: background 0.2s; }
         .icon-btn:hover { background: rgba(0,0,0,0.5); }
         
-        /* Floating Save Button */
         .upload-batch-btn { display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 20; gap: 8px; align-items: center; }
         .upload-batch-btn.active { display: flex; animation: fadeIn 0.3s ease; }
 
         /* --- Inventory View --- */
         .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .inventory-card { padding: 24px; display: flex; flex-direction: column; }
+        .inventory-card { padding: 24px; display: flex; flex-direction: column; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         .carousel-container { position: relative; width: 100%; padding-top: 75%; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
         .carousel-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 16px; transition: opacity 0.3s ease; }
@@ -115,6 +116,7 @@
         .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(120px); padding: 16px 32px; color: white; font-weight: 500; font-size: 15px; border-radius: 50px; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; background: rgba(79, 70, 229, 0.9); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3); }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.danger-toast { background: rgba(255, 71, 87, 0.9); box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3); }
+        .toast.sync-toast { background: #10ac84; box-shadow: 0 10px 30px rgba(16, 172, 132, 0.3); }
 
         .loader-overlay { position: fixed; inset: 0; background: rgba(224, 229, 236, 0.8); backdrop-filter: blur(5px); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 600; gap: 15px; }
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(79, 70, 229, 0.2); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -130,7 +132,7 @@
 
     <header class="neo-box">
         <i class="ph-fill ph-aperture"></i>
-        <h1>Step and Style Manager</h1>
+        <h1>Capture Pro</h1>
     </header>
 
     <div class="container">
@@ -175,7 +177,7 @@
                     <div id="filmstrip" class="filmstrip"></div>
 
                     <button id="upload-batch-btn" class="upload-batch-btn" onclick="saveProductBatch()">
-                        <i class="ph-bold ph-upload-simple"></i>Upload Product<span id="batch-count">0</span>
+                        <i class="ph-bold ph-upload-simple"></i> Upload Product (<span id="batch-count">0</span>)
                     </button>
 
                     <div class="camera-controls glass-panel">
@@ -223,6 +225,23 @@
         let facingMode = 'environment';
         let inventoryData =[];
         let currentBatch =[]; 
+        let isInventoryLoaded = false;
+
+        // ==========================================
+        // INITIALIZE REALTIME SYNC (THE MAGIC!)
+        // ==========================================
+        supabaseClient
+            .channel('public:inventory_items')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'inventory_items' }, payload => {
+                handleRealtimeInsert(payload.new);
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'inventory_items' }, payload => {
+                handleRealtimeUpdate(payload.new);
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'inventory_items' }, payload => {
+                handleRealtimeDelete(payload.old);
+            })
+            .subscribe();
 
         // ==========================================
         // UI HELPERS
@@ -238,9 +257,12 @@
             const toast = document.getElementById('toast');
             const icon = toast.querySelector('i');
             document.getElementById('toast-msg').innerText = message;
+            
+            toast.className = 'toast show'; // reset classes
             if(type === 'danger') { toast.classList.add('danger-toast'); icon.className = 'ph-fill ph-trash'; } 
-            else { toast.classList.remove('danger-toast'); icon.className = 'ph-fill ph-check-circle'; }
-            toast.classList.add('show');
+            else if(type === 'sync') { toast.classList.add('sync-toast'); icon.className = 'ph-bold ph-arrows-clockwise'; }
+            else { icon.className = 'ph-fill ph-check-circle'; }
+            
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
@@ -316,42 +338,27 @@
         function removePhoto(index) { currentBatch.splice(index, 1); renderFilmstrip(); }
 
         // ==========================================
-        // UPLOAD LOGIC (WITH FAILSAFE)
+        // UPLOAD LOGIC
         // ==========================================
-        
         async function uploadSingleImage(blob) {
             toggleLoader(true, "Saving Single Product...");
             try {
                 const fileName = `product_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-                
                 const { error: uploadError } = await supabaseClient.storage.from('images').upload(fileName, blob, { contentType: 'image/jpeg' });
                 if (uploadError) throw new Error("Storage Upload Failed: " + uploadError.message);
                 
                 const { data } = supabaseClient.storage.from('images').getPublicUrl(fileName);
-                
-                // FAILSAFE: We pass the URL to BOTH 'images' array AND 'image_url' string to bypass the strict rule
-                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ 
-                    image_url: data.publicUrl, 
-                    images: [data.publicUrl] 
-                }]);
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ image_url: data.publicUrl, images: [data.publicUrl] }]);
                 if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
 
                 showToast("Product saved! Ready for next.");
-            } catch (err) {
-                console.error("Upload error:", err);
-                alert("ERROR: " + err.message);
-            } finally {
-                toggleLoader(false);
-            }
+            } catch (err) { alert("ERROR: " + err.message); } finally { toggleLoader(false); }
         }
 
         async function saveProductBatch() {
             if(currentBatch.length === 0) return;
-            
             const batchToUpload = [...currentBatch];
-            currentBatch =[];
-            renderFilmstrip();
-            
+            currentBatch =[]; renderFilmstrip();
             toggleLoader(true, `Uploading Product (${batchToUpload.length} photos)...`);
 
             try {
@@ -364,29 +371,111 @@
                 });
 
                 const uploadedUrls = await Promise.all(uploadPromises);
-
-                // FAILSAFE: We pass uploadedUrls[0] to the old image_url string to bypass the database rule
-                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ 
-                    image_url: uploadedUrls[0], 
-                    images: uploadedUrls 
-                }]);
-                
+                const { error: dbError } = await supabaseClient.from('inventory_items').insert([{ image_url: uploadedUrls[0], images: uploadedUrls }]);
                 if (dbError) throw new Error("Database Insert Failed: " + dbError.message);
 
                 showToast("Multi-photo Product saved!");
-
             } catch (err) {
-                console.error("Batch upload failed:", err);
                 alert("ERROR: " + err.message);
-                currentBatch = [...batchToUpload, ...currentBatch];
-                renderFilmstrip();
-            } finally {
-                toggleLoader(false);
+                currentBatch = [...batchToUpload, ...currentBatch]; renderFilmstrip();
+            } finally { toggleLoader(false); }
+        }
+
+        // ==========================================
+        // INVENTORY GENERATOR (Creates HTML for 1 Card)
+        // ==========================================
+        function createCardHTML(item) {
+            let imagesArray = item.images ||[];
+            if (imagesArray.length === 0 && item.image_url) imagesArray = [item.image_url];
+            if (imagesArray.length === 0) imagesArray =["https://via.placeholder.com/400x300?text=No+Image"];
+
+            const hasMultiple = imagesArray.length > 1;
+            const imagesJson = JSON.stringify(imagesArray).replace(/"/g, '&quot;');
+
+            return `
+                <div class="carousel-container" id="carousel-${item.id}" data-images="${imagesJson}" data-idx="0">
+                    <img src="${imagesArray[0]}" class="carousel-img" id="img-${item.id}" loading="lazy">
+                    ${hasMultiple ? `
+                        <button class="carousel-nav nav-left" onclick="slideImg('${item.id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
+                        <button class="carousel-nav nav-right" onclick="slideImg('${item.id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
+                        <div class="carousel-badge" id="badge-${item.id}">1 / ${imagesArray.length}</div>
+                    ` : ''}
+                </div>
+                
+                <div class="input-group"><label><i class="ph ph-barcode"></i> Model Number</label>
+                    <input type="text" class="neo-input" id="model-${item.id}" value="${item.model_no || ''}"></div>
+                <div class="input-group"><label><i class="ph ph-ruler"></i> Sizes Available</label>
+                    <input type="text" class="neo-input" id="size-${item.id}" value="${item.sizes_available || ''}"></div>
+                <div class="input-group" style="margin-bottom: 20px;"><label><i class="ph ph-palette"></i> Color / Finish</label>
+                    <input type="text" class="neo-input" id="color-${item.id}" value="${item.color || ''}"></div>
+
+                <div class="inventory-actions">
+                    <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="flex: 1;"><i class="ph ph-floppy-disk"></i> Save Data</button>
+                    <button class="neo-btn neo-btn-danger" onclick="deleteItem('${item.id}', this)" style="flex: 0 0 60px;"><i class="ph ph-trash"></i></button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // REALTIME HANDLERS
+        // ==========================================
+        function handleRealtimeInsert(newItem) {
+            // Check if already in memory (uploaded by this client)
+            if(inventoryData.find(i => i.id === newItem.id)) return;
+            
+            inventoryData.unshift(newItem);
+
+            if(!isInventoryLoaded) return; // Ignore DOM manipulation if they haven't visited inventory yet
+
+            const list = document.getElementById('inventory-list');
+            const emptyState = list.querySelector('.empty-state');
+            if(emptyState) emptyState.remove();
+
+            const card = document.createElement('div');
+            card.className = 'neo-box inventory-card';
+            card.id = `card-${newItem.id}`;
+            card.innerHTML = createCardHTML(newItem);
+            
+            // Puts the newest item at the top dynamically
+            list.prepend(card);
+            showToast("New product synced live!", "sync");
+        }
+
+        function handleRealtimeUpdate(updatedItem) {
+            const index = inventoryData.findIndex(i => i.id === updatedItem.id);
+            if(index > -1) inventoryData[index] = updatedItem;
+
+            if(!isInventoryLoaded) return;
+
+            // Updates the inputs ONLY IF the user is NOT currently typing in them
+            const modelInput = document.getElementById(`model-${updatedItem.id}`);
+            const sizeInput = document.getElementById(`size-${updatedItem.id}`);
+            const colorInput = document.getElementById(`color-${updatedItem.id}`);
+
+            if(modelInput && document.activeElement !== modelInput) modelInput.value = updatedItem.model_no || '';
+            if(sizeInput && document.activeElement !== sizeInput) sizeInput.value = updatedItem.sizes_available || '';
+            if(colorInput && document.activeElement !== colorInput) colorInput.value = updatedItem.color || '';
+        }
+
+        function handleRealtimeDelete(oldItem) {
+            inventoryData = inventoryData.filter(i => i.id !== oldItem.id);
+            if(!isInventoryLoaded) return;
+
+            const card = document.getElementById(`card-${oldItem.id}`);
+            if(card) {
+                card.style.transform = 'scale(0.8)';
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    if(inventoryData.length === 0) {
+                        document.getElementById('inventory-list').innerHTML = `<div class="empty-state neo-box"><i class="ph ph-package"></i><h3>Your inventory is empty</h3><p>Use Continuous Capture to add items.</p></div>`;
+                    }
+                }, 300);
             }
         }
 
         // ==========================================
-        // INVENTORY LOGIC
+        // INVENTORY BASE LOGIC
         // ==========================================
         async function loadInventory() {
             toggleLoader(true, "Loading inventory...");
@@ -396,7 +485,9 @@
             try {
                 const { data, error } = await supabaseClient.from('inventory_items').select('*').order('created_at', { ascending: false });
                 if (error) throw new Error("Failed to load: " + error.message);
+                
                 inventoryData = data;
+                isInventoryLoaded = true;
 
                 if(data.length === 0) {
                     list.innerHTML = `<div class="empty-state neo-box"><i class="ph ph-package"></i><h3>Your inventory is empty</h3><p>Use Continuous Capture to add items.</p></div>`;
@@ -404,37 +495,10 @@
                 }
 
                 data.forEach(item => {
-                    let imagesArray = item.images ||[];
-                    if (imagesArray.length === 0 && item.image_url) imagesArray = [item.image_url];
-                    if (imagesArray.length === 0) imagesArray =["https://via.placeholder.com/400x300?text=No+Image"];
-
-                    const hasMultiple = imagesArray.length > 1;
-                    const imagesJson = JSON.stringify(imagesArray).replace(/"/g, '&quot;');
-
                     const card = document.createElement('div');
                     card.className = 'neo-box inventory-card';
-                    card.innerHTML = `
-                        <div class="carousel-container" id="carousel-${item.id}" data-images="${imagesJson}" data-idx="0">
-                            <img src="${imagesArray[0]}" class="carousel-img" id="img-${item.id}" loading="lazy">
-                            ${hasMultiple ? `
-                                <button class="carousel-nav nav-left" onclick="slideImg('${item.id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
-                                <button class="carousel-nav nav-right" onclick="slideImg('${item.id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
-                                <div class="carousel-badge" id="badge-${item.id}">1 / ${imagesArray.length}</div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="input-group"><label><i class="ph ph-barcode"></i> Model Number</label>
-                            <input type="text" class="neo-input" id="model-${item.id}" value="${item.model_no || ''}"></div>
-                        <div class="input-group"><label><i class="ph ph-ruler"></i> Sizes Available</label>
-                            <input type="text" class="neo-input" id="size-${item.id}" value="${item.sizes_available || ''}"></div>
-                        <div class="input-group" style="margin-bottom: 20px;"><label><i class="ph ph-palette"></i> Color / Finish</label>
-                            <input type="text" class="neo-input" id="color-${item.id}" value="${item.color || ''}"></div>
-
-                        <div class="inventory-actions">
-                            <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="flex: 1;"><i class="ph ph-floppy-disk"></i>Save</button>
-                            <button class="neo-btn neo-btn-danger" onclick="deleteItem('${item.id}', this)" style="flex: 0 0 60px;"><i class="ph ph-trash"></i></button>
-                        </div>
-                    `;
+                    card.id = `card-${item.id}`; // Crucial for Realtime updating/deleting
+                    card.innerHTML = createCardHTML(item);
                     list.appendChild(card);
                 });
             } catch (err) { alert(err.message); } finally { toggleLoader(false); }
@@ -480,9 +544,8 @@
                     const fileNames = imagesToDel.map(url => { const p = url.split('/'); return p[p.length - 1]; });
                     await supabaseClient.storage.from('images').remove(fileNames);
                 }
-
-                btn.closest('.inventory-card').remove();
-                showToast("Product deleted", "danger");
+                // No need to manually remove the DOM element here! The Realtime `handleRealtimeDelete` function catches it and does it automatically!
+                
             } catch (err) { alert("Failed to delete: " + err.message); btn.innerHTML = `<i class="ph ph-trash"></i>`; btn.style.pointerEvents = 'auto'; }
         }
 
