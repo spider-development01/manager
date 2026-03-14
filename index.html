@@ -132,7 +132,7 @@
 
     <header class="neo-box">
         <i class="ph-fill ph-aperture"></i>
-        <h1>Capture Pro</h1>
+        <h1>Step and Style Manager</h1>
     </header>
 
     <div class="container">
@@ -177,7 +177,7 @@
                     <div id="filmstrip" class="filmstrip"></div>
 
                     <button id="upload-batch-btn" class="upload-batch-btn" onclick="saveProductBatch()">
-                        <i class="ph-bold ph-upload-simple"></i> Upload Product (<span id="batch-count">0</span>)
+                        <i class="ph-bold ph-upload-simple"></i>Upload Product<span id="batch-count">0</span>
                     </button>
 
                     <div class="camera-controls glass-panel">
@@ -410,7 +410,7 @@
                     <input type="text" class="neo-input" id="color-${item.id}" value="${item.color || ''}"></div>
 
                 <div class="inventory-actions">
-                    <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="flex: 1;"><i class="ph ph-floppy-disk"></i> Save Data</button>
+                    <button class="neo-btn neo-btn-primary" onclick="updateItem('${item.id}', this)" style="flex: 1;"><i class="ph ph-floppy-disk"></i>Save</button>
                     <button class="neo-btn neo-btn-danger" onclick="deleteItem('${item.id}', this)" style="flex: 0 0 60px;"><i class="ph ph-trash"></i></button>
                 </div>
             `;
